@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,15 +11,25 @@ public class PlayerController : MonoBehaviour
     //borders
     private float bordersX = 22.0f;
     private float borderMaxZ = -4.0f;
-    private float borderMinZ = -13.0f; 
+    private float borderMinZ = -13.0f;
+
+    //testin Moved RB
+    [SerializeField] static float speedRB = 20f;
+    [SerializeField] Vector3 inputKey;
+    public Rigidbody rb;
 
     private void Start()
     {
+        //testing Moved rb
+        rb = GetComponent<Rigidbody>();
     }
     private void FixedUpdate()
     {
-        VerticalMoved();
-        HorizontallMoved();
+        //VerticalMoved();
+        //HorizontallMoved();
+
+        //testing moved RB
+        HorizontalVerticalMoved();
     }
     private void HorizontallMoved()
     {
@@ -37,7 +48,7 @@ public class PlayerController : MonoBehaviour
         switch (axis)
         {
             case "Horizontal":
-                if (transform.position.x <= minValue)
+                if (transform.position.x <= -bordersX)
                 {
                     transform.position = new Vector3(minValue, transform.position.y, transform.position.z);
                 }
@@ -60,5 +71,39 @@ public class PlayerController : MonoBehaviour
             default:
                 break;
         }
+    }
+    //using MovePosition (RB) 
+    private void HorizontalVerticalMoved()
+    {
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
+        //ChekedPositionRBMoved();
+        inputKey = new Vector3(horizontalInput, 0, verticalInput);
+        //ChekedPositionRBMoved();
+        rb.MovePosition(transform.position + inputKey * speedRB * Time.deltaTime);
+    }
+
+    private void ChekedPositionRBMoved()
+    {
+        if (transform.position.x <= -bordersX)
+        {
+            transform.position = new Vector3(-bordersX, transform.position.y, transform.position.z);
+        }
+        else if (transform.position.x >= bordersX)
+        {
+            transform.position = new Vector3(bordersX, transform.position.y, transform.position.z);
+        }
+
+        if (transform.position.z >= borderMaxZ)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, borderMaxZ);
+        }
+        else if (transform.position.z <= borderMinZ)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, borderMinZ);
+
+        }
+
+
     }
 }
